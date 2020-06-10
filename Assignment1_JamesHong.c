@@ -19,7 +19,7 @@ void decipher(char encrypted[], char key[]);
 int checkInput(char str[]);
 
 int main() {
-  int errCount = 0;
+  int errCount = 0, responseLower;
   char keyword[100], message[100], encrypted[100];
   char response[100];
 
@@ -43,7 +43,7 @@ int main() {
   errCount = checkInput(message);
 
   if (errCount < 2) {
-    // printf("%d", errCount);
+    /* printf("%d", errCount); */
     printf("\033[1;36m");
     printf("\n##### Step2: Enter a NON-NUMERICAL keyword used to encipher your "
            "message:\n ");
@@ -53,7 +53,7 @@ int main() {
     /* When both checks pass & session still alive, start encryption/decryption
      */
     if (errCount < 2) {
-      // printf("%d", errCount);
+      /* printf("%d", errCount); */
       encipher(message, keyword);
 
       printf("\033[1;36m");
@@ -67,7 +67,7 @@ int main() {
       scanf("%s", response);
 
       /* Normalize input to lowercase then check for 'y' or ascii number 121 */
-      int responseLower = tolower(response[0]);
+      responseLower = tolower(response[0]);
       if (responseLower == 121) {
         printf("\033[1;36m");
         printf("\n##### Step4: Please enter the enciphered text: \n");
@@ -114,8 +114,8 @@ void encipher(char message[], char key[]) {
     if (key[i] != '\0') {
       messageConverted[i] = tolower(message[i]) - 97;
       keyConverted[i] = tolower(key[i]) - 97;
-      encrypted[i] = (char)((messageConverted[i] + keyConverted[i]) % 26) + 97;
-      // printf("%c ", encrypted[i]);
+      encrypted[i] = (char)((messageConverted[i] + keyConverted[i]) % 26 + 97);
+      /* printf("%c ", encrypted[i]); */
     }
   }
 
@@ -127,8 +127,8 @@ void encipher(char message[], char key[]) {
     }
     messageConverted[i] = tolower(message[i]) - 97;
     keyRepeated[i] = tolower(key[k]) - 97;
-    encrypted[i] = (char)((messageConverted[i] + keyRepeated[i]) % 26) + 97;
-    // printf("%c ", encrypted[i]);
+    encrypted[i] = (char)((messageConverted[i] + keyRepeated[i]) % 26 + 97);
+    /* printf("%c ", encrypted[i]); */
     k++;
   }
 
@@ -166,13 +166,14 @@ void decipher(char encrypted[], char key[]) {
   /* Decrypt encoded message as a function of key length */
   for (i = 0; i < strlen(key); i++) {
     if (encrypted[i] != '\0') {
-      decrypted[i] = ((int)encrypted[i] - 97) - ((int)key[i] - 97);
+      decrypted[i] =
+          ((int)tolower(encrypted[i]) - 97) - ((int)tolower(key[i]) - 97);
 
       if (decrypted[i] < 0) {
         decrypted[i] += 26;
       }
 
-      message[i] = (char)decrypted[i] + 97;
+      message[i] = (char)(decrypted[i] + 97);
 
       /* printf("%c ", message[i]); */
     }
@@ -182,18 +183,19 @@ void decipher(char encrypted[], char key[]) {
    * Decrypt the remaining encoded message as a function determined by
    * number of key repeats
    */
-  k = 0;
+
   for (i = strlen(key); i < strlen(encrypted); i++) {
     if (key[k] == '\0') {
       k = 0;
     }
 
-    decrypted[i] = ((int)encrypted[i] - 97) - ((int)key[k] - 97);
+    decrypted[i] =
+        ((int)tolower(encrypted[i]) - 97) - ((int)tolower(key[k]) - 97);
 
     if (decrypted[i] < 0) {
       decrypted[i] += 26;
     }
-    repeat[i] = (char)decrypted[i] + 97;
+    repeat[i] = (char)(decrypted[i] + 97);
 
     /* printf("%c ", repeat[i]); */
     k++;
@@ -221,13 +223,13 @@ void decipher(char encrypted[], char key[]) {
  */
 int checkInput(char str[]) {
 
-  int passCheck = 0, errCount = 0;
+  int passCheck = 0, errCount = 0, i;
   while (errCount < 2 && passCheck == 0) {
 
     printf("=>: ");
     scanf("%s", str);
 
-    for (int i = 0; i < strlen(str); i++) {
+    for (i = 0; i < strlen(str); i++) {
       /* Loop until number is found */
       if (isalpha(str[i]) == 0) {
         errCount += 1;
